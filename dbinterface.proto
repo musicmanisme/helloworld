@@ -1,0 +1,361 @@
+
+/////////////////////////////////////////////////////////////////////////
+//   基础结构                                                          //
+/////////////////////////////////////////////////////////////////////////
+//说明通用结构
+//通用key(int32) value(int32)格式数组结构:DB_ArrayUnit
+// key int64  value int32    DB_ArrayUnit64
+// key int32   value string   DB_ArrayUnitStr
+//通用排行榜单元机构:DB_RankBase
+
+import "RankPlayerInfo.proto";
+import "ArenaBattleRecorde.proto";
+import "CarData.proto";
+import "CarList.proto";
+import "MailData.proto";
+
+message DB_ArrayUnit
+{
+	optional int32				id = 1 [default = 0];
+	optional int32				value = 2 [default = 0];
+}
+
+//位缓存
+message DB_BitCache
+{
+	repeated int32 			 bit 					= 1;
+}
+
+//封号
+message DB_BanLogin
+{
+	optional bool 			 banlogin 				= 1;
+	optional int64 			 time     				= 2;
+}
+
+
+//战车
+message DB_Car
+{
+	optional int64           id						= 1; //唯一id
+	optional int32           car_id					= 2; //配表id
+	optional int32           atk					= 3; //攻击
+	optional int32           def					= 4; //防御
+	optional int32           hp						= 5; //生命
+	optional int32           sp						= 6; //攻击速度
+	optional int32           crt					= 7; //暴击率
+	optional int32           crt_dmg				= 8; //暴击伤害加成百分比
+	optional int32           buff_hit				= 9; //buff生效几率
+	optional int32           buff_evd				= 10; //buff抵抗几率
+	optional int32           hit					= 11; //命中率
+	optional int32           star					= 12; //星级
+	optional int32           lvl					= 13;//等级
+	repeated DB_Skill        skill					= 14; //技能
+	optional DB_CarEquipPos  equip_pos				= 15; //装备
+	optional DB_Skin           skin					= 16; //皮肤
+	optional int32           train_lvl				= 17; //强化等级
+	optional string           name					= 18; //名字
+	optional int32           exp					= 19; //经验
+	optional int32           power					= 20; //战斗力
+	optional int32           quality				= 21; //品质
+	repeated int32			 suits					= 22;//装备的所有套装
+}
+
+
+//皮肤
+message DB_Skin
+{
+	optional int32          used_id					= 1;
+	repeated int32          has_skin				= 2;
+}
+
+
+//技能
+message DB_Skill
+{
+	optional int32           id						= 1; //技能id
+	optional int32           lvl					= 2 [default = 0]; //等级
+}
+
+
+
+//战车装备位
+message DB_CarEquipPos
+{
+	optional int64          weapon						= 1[default = 0]; //武器
+	optional int64          ammunition					= 2[default = 0]; //弹药
+	optional int64          armor						= 3[default = 0]; //装甲
+	optional int64          engine						= 4[default = 0]; //引擎
+	optional int64          tires						= 5[default = 0]; //轮胎
+	optional int64          fuel						= 6[default = 0]; //燃油
+}
+
+//装备
+message DB_Equip
+{
+	optional int64          id						= 1; //唯一id
+	optional int32			equipid					= 2;//装备配表id
+	optional int32			strenth_lvl				= 3[default = 0];//强化等级
+	repeated DB_ArrayUnit	rand_attr				= 4;//随机属性
+	optional int64			carid					= 5 [default = 0];//装备的车id
+}
+
+//message DB_EquipSuit
+//{
+//	optional int32				suitid					= 1; //套装id
+//	repeated DB_Equip          	equips					= 2; //套装下所有装备
+//}
+
+message DB_EquipData
+{
+	repeated DB_Equip			allequip				= 1;//所有装备 
+}
+
+//关卡
+message DB_StageUnit
+{
+	optional int32			areaid					= 1;//区域id
+	optional int32			stageid					= 2; //关卡id
+	optional int32         difficulty				= 3;//已解锁难度
+}
+
+//关卡区域
+message DB_StageArea
+{
+	optional int32         areaid					= 1; //章节+区域id
+	optional int32         star						= 2[default = 0];//星级
+	optional bool			normal_ward				= 3[default = false];//普通难度奖励是否领取
+	optional bool			mid_ward				= 4[default = false];//中等难度
+	optional bool			hero_ward				= 5[default = false];//英雄难度
+}
+
+//关卡攻击次数
+message DB_StageAtkCache
+{
+	optional int32			stage_uid					= 1;
+	optional int32			atktimes					= 2;//攻击次数
+}
+
+//关卡全部数据
+message DB_StageData
+{
+	repeated DB_StageUnit       stagelist			= 1;//所有通关的关卡
+	repeated DB_StageArea       arealist			= 2;// 区域星级信息
+	repeated DB_StageAtkCache	atkcache			= 3;//所有关卡攻击次数信息
+	optional int32				nowatk				= 4;//现在可以打的区域id
+	optional int32				passmax_stage		= 5 [default = 0];//普通关卡通关的最大关卡id
+	repeated string				default_atc			= 6;//默认阵容信息
+}
+
+//战车数据
+message DB_CarInfo
+{
+	repeated DB_Car          car_list				= 1;
+	optional int64			 captain_id				= 2;//队长id 推图队形
+}
+
+//图纸
+message DB_Paper
+{
+	optional int32				id					= 1;
+	optional int32				num					= 2;
+}
+
+message	DB_PaperInfo
+{
+	repeated DB_Paper			papers				= 1;//图纸
+	repeated DB_Paper			paperpieces			= 2;//碎片
+	optional int32			 	junior_paper		= 3 [default = 0];//初级万能图纸
+	optional int32			 	senior_paper		= 4 [default = 0];//高级万能图纸
+	repeated DB_Paper			charge_recorde		= 5;//兑换记录
+}
+
+//物品
+message DB_Item
+{
+	optional int32		itemid = 1;//物品id
+	optional int32		num = 2;//物品数量
+}
+
+message DB_ItemData
+{
+	repeated DB_Item			itemlist = 1;
+}
+
+
+//竞技场
+message DB_ArenaData
+{
+	optional int32					atk_times				= 1[default = 0];//当天已挑战次数
+	repeated ArenaBattleRecorde		atk_rec					= 2;//对战记录 最多20条
+	repeated int64					defend_tac				= 3;//防守阵容car id
+	repeated int32					enemyrank				= 4;//随机到的4个对手排名
+	optional int32					freshtime				= 5;//上次刷新对手时间
+	optional int32					used_refresh			= 6;//使用免费刷新次数
+	repeated DB_Item				shopitem				= 7;//已购买的物品及数量
+	repeated int64					atk_tac					= 8;//上次的攻击阵容
+	optional int32					score					= 9;//竞技场积分
+	optional int32					atk_fresh				= 10;//竞技场攻击次数刷新时间
+}
+
+//邮件信息
+message DB_MailData
+{
+	optional DB_MailList		mails = 1;//邮件
+}
+
+message DB_MailList
+{
+	repeated MailData		list = 1;
+}
+
+
+message DB_LotteryCardItem
+{
+	optional int32           id                    = 1;// 抽奖id 对应spydata.txt表格
+	optional int32           cnt_draw              = 2;// 已抽奖次数
+	optional int64           time_drawfree         = 3;// 抽奖时间 上一次免费抽奖时间
+	optional int32           cnt_drawsingle        = 4;// 单抽次数
+}
+
+message DB_LotteryCardItemEx
+{
+	optional int32           id                    = 1;// 抽奖id 对应spyactivitydata.txt表格
+	optional bool            firstfreedraw              = 2 [default = false];// 是否已经免费抽奖
+	optional int32           version               = 3 [default = 0];// 抽奖id 对应spyactivitydata.txt表格
+	optional int32           cnt_draw              = 4;// 已抽奖次数
+	repeated int32           weightadd             = 5;// 活动抽卡未获得指定卡时，增加的权重系数
+}
+
+message DB_LotteryCardShop
+{
+	repeated int32        items            = 1;// 所有商品
+	repeated bool         issell           = 2;// 是否卖出 // 刷新商品时，重置
+	optional int32        discount_index      = 3[default = -1];// 当前打折商品下标0-5
+	optional int32                         cost_refreshshop   = 4;// 当前刷新商店花费
+	optional int32                         cnt_curcost_rs     = 5;// 当前刷新商店花费持续次数
+	optional int32                         cost_refreshdice   = 6;// 当前刷新骰子花费
+	optional int32                         cnt_curcost_rd     = 7;// 当前刷新骰子花费持续次数
+	optional int32        dayfreecnt_rolldice                 = 8;// 每日免费刷新骰子次数
+}
+
+message DB_LotteryCard
+{
+	optional int32                       coin                  = 1; // 代币  抽奖产出
+	repeated DB_LotteryCardItem          item                  = 2; // 包含战车、装备抽奖记录(次数、时间)
+	repeated DB_LotteryCardItemEx        activity_item         = 3; // 活动抽奖的首抽信息
+	optional DB_LotteryCardShop          shop                  = 4; // 抽卡商店
+}
+
+message DB_LotteryCenter
+{
+	optional DB_LotteryCard  lottery_card          = 1; // 抽卡系统
+}
+
+message DB_Player
+{
+	optional int64      	 gold            		= 1[default = 0];  //金币
+	optional int32      	 cash            		= 2[default = 0];  //付费获得的钻石
+	optional int32      	 level           		= 3;  //等级
+	optional int32      	 exp	           		= 4;  //经验
+	optional int32           vip					= 5[default = 0]; //vip
+	optional DB_CarInfo      cars					= 6; //战车
+	optional DB_StageData    stagedata				= 7; //关卡数据
+	optional DB_PaperInfo	 paperdata				= 8; //图纸数据
+	optional int32			 oil					= 9; //能量
+	optional int32			 updateday				= 10; //刷新时间
+	optional int32			 power					= 11 [default = 0];//战斗力
+	optional DB_ItemData	 itemdata				= 12;//物品信息
+	optional DB_ArenaData    arena_data				= 13;//竞技场信息
+	optional DB_MailData		 maillist			= 14;//邮件信息
+	optional DB_EquipData	 equip_data				= 15;//所有装备
+	optional DB_LotteryCenter   lottery             = 16;// 抽奖中心  包含所有抽奖系统
+	optional int32			 cash_free				= 17[default = 0];//免费获得的钻石
+}
+
+
+message DB_User
+{
+    required int64           id              	 	= 1;  //id
+    required string          openid          	 	= 2;  //openid
+    optional string          name            	 	= 3;  //名字
+    optional int32           head            	 	= 4;  //头像
+    optional int64           last_login_time 	 	= 5;  //上次登录时间
+    optional int64           regist_time     	 	= 6;  //注册时间
+    optional int32           unbreakLogin    	 	= 7;  //连续登录天数
+    optional int32           totalbuy        	 	= 8;  //总消费
+	optional DB_Player       player                 = 9;  //角色数据
+	optional DB_BanLogin     banlogin               = 10;//封禁
+	optional int32			 channel			    = 11; //渠道
+}
+
+
+//--------------------全局模块-----------------------------------
+
+
+//邮件系统
+message DB_MailModule
+{
+	optional int64				uid = 1;
+	optional DB_MailList		maillist = 2;
+}
+
+
+//不在线玩家领奖中心
+message DB_Award
+{
+	optional int64			 uid					= 1; //唯一ID
+	optional int32			 index					= 2; //对应AwardCenterTbl第一列
+	optional int32			 time					= 3; //发奖时间
+	repeated string			 param					= 4; //参数
+	optional int32			 optype					= 5; //奖励来源
+	//optional DB_DropList	 droplist				= 6; //奖励内容
+}
+
+message DB_AwardModule
+{
+	repeated DB_Award		awardlist				= 1;	 
+}
+
+
+//排行榜通用数据结构
+message DB_RankUnit
+{
+	optional int64			uid					= 1;
+	optional int32			rank 				= 2;//排名
+	optional int32			score				= 3;//积分
+	optional int64			time	    		= 4;  //时间
+	optional int32			rankchange			= 5[default = 0];//距上次排名变化值
+}
+
+message DB_ArenaPlayer
+{
+	optional CarList		def_atc = 1;//防守阵容
+	optional int32			score_time = 2 [default = 0];//上榜时间
+	optional int32			score_cache = 3 [default = 0];//积分cache
+	optional bool			need_fresh = 4[default = false];//是否需要刷新对手
+}
+
+message DB_ArenaModule
+{
+	repeated DB_RankUnit				rankdata			= 1;
+	optional int32						reward_time			= 2[default = 0];
+	repeated ArenaBattleRecorde			recordes			= 3;//不在线玩家战斗记录
+}
+
+
+//排行帮玩家基础数据，只有在进入除活动，竞技场排行榜外的玩家才会记录数据
+//用于玩家数据实时刷新
+//message DB_RankPlayerInfo
+//{
+//	optional int64		uid						= 1;
+//	optional int32		level					= 2;
+//	optional int32      head					= 3;
+//	optional string		name					= 4;
+//	optional int32		power					= 5;
+//}
+
+message DB_RankPlayerData
+{
+	repeated RankPlayerInfo		playerinfo	= 1;
+}
